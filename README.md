@@ -28,11 +28,9 @@
   <br />
 </p>
 
-<!-- Add a screenshot of the app at docs/screenshot.png and uncomment:
 <p align="center">
-  <img src="docs/screenshot.png" width="100%" alt="Notion Sync for Shopify" />
+  <img src="https://storage.googleapis.com/fixed/clients/ajaxy/notion-sync.png" width="100%" alt="Notion Sync for Shopify" />
 </p>
--->
 
 > **Self-hosted.** This app isn't listed on the Shopify App Store. You run it on your own server and install it on your store as a custom app. Your store's data goes straight to your own Notion workspace.
 
