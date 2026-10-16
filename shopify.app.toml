@@ -1,0 +1,29 @@
+# Shopify app configuration. Replace the values marked YOUR_... (see README.md, "Create the Shopify app").
+# Learn more: https://shopify.dev/docs/apps/tools/cli/configuration
+
+client_id = "YOUR_SHOPIFY_CLIENT_ID"
+name = "Notion Sync"
+application_url = "https://YOUR_APP_DOMAIN/"
+embedded = true
+handle = "notion-sync"
+
+[build]
+automatically_update_urls_on_dev = true
+
+[webhooks]
+api_version = "2026-07"
+
+[webhooks.privacy_compliance]
+customer_deletion_url = "https://YOUR_APP_DOMAIN/webhooks/"
+customer_data_request_url = "https://YOUR_APP_DOMAIN/webhooks/"
+shop_deletion_url = "https://YOUR_APP_DOMAIN/webhooks/"
+
+[access.admin]
+direct_api_mode = "online"
+
+[access_scopes]
+# Learn more at https://shopify.dev/docs/apps/tools/cli/configuration#access_scopes
+scopes = "read_locales,read_products,read_themes,write_products,read_metaobjects,read_content,read_customers,read_orders,write_orders,read_merchant_managed_fulfillment_orders,write_merchant_managed_fulfillment_orders,read_third_party_fulfillment_orders,write_third_party_fulfillment_orders,read_inventory,write_inventory"
+
+[auth]
+redirect_urls = [ "https://YOUR_APP_DOMAIN/api/auth" ]

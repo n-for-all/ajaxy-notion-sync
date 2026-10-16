@@ -1,0 +1,65 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+  .ai-gradient {
+    @apply bg-gradient-to-r from-ai-primary via-ai-secondary to-ai-accent;
+  }
+
+  .ai-card {
+    @apply rounded-lg border border-gray-200 bg-white shadow-sm hover:shadow-md transition-shadow;
+  }
+
+  .ai-input {
+    @apply w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-ai-primary focus:outline-none focus:ring-2 focus:ring-ai-primary/20 transition-all;
+  }
+
+  .ai-button {
+    @apply inline-flex items-center justify-center rounded-lg font-medium transition-all;
+  }
+
+  .ai-button-primary {
+    @apply ai-button bg-ai-primary text-white hover:bg-ai-primary/90 disabled:bg-gray-300 disabled:cursor-not-allowed;
+  }
+
+  .ai-button-secondary {
+    @apply ai-button border border-ai-primary text-ai-primary hover:bg-ai-primary/10 disabled:border-gray-300 disabled:text-gray-300 disabled:cursor-not-allowed;
+  }
+
+  .ai-button-danger {
+    @apply ai-button bg-red-600 text-white hover:bg-red-700 disabled:bg-gray-300 disabled:cursor-not-allowed;
+  }
+
+  .ai-badge {
+    @apply inline-flex items-center rounded-full px-3 py-1 text-sm font-medium;
+  }
+
+  .ai-badge-info {
+    @apply ai-badge bg-blue-100 text-blue-800;
+  }
+
+  .ai-badge-success {
+    @apply ai-badge bg-green-100 text-green-800;
+  }
+
+  .ai-badge-warning {
+    @apply ai-badge bg-yellow-100 text-yellow-800;
+  }
+
+  .ai-badge-error {
+    @apply ai-badge bg-red-100 text-red-800;
+  }
+
+  .ai-spinner {
+    @apply inline-block h-4 w-4 animate-spin rounded-full border-2 border-gray-300 border-t-ai-primary;
+  }
+
+  .ai-progress {
+    @apply h-2 w-full overflow-hidden rounded-full bg-gray-200;
+  }
+
+  .ai-progress-bar {
+    @apply h-full bg-gradient-to-r from-ai-primary to-ai-secondary transition-all duration-300;
+  }
+}

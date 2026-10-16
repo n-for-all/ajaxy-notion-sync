@@ -1,0 +1,336 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Session {
+  id                  String    @id
+  shop                String
+  state               String
+  isOnline            Boolean   @default(false)
+  scope               String?
+  expires             DateTime?
+  accessToken         String
+  userId              BigInt?
+  firstName           String?
+  lastName            String?
+  email               String?
+  accountOwner        Boolean   @default(false)
+  locale              String?
+  collaborator        Boolean?  @default(false)
+  emailVerified       Boolean?  @default(false)
+  refreshToken        String?
+  refreshTokenExpires DateTime? 
+}
+
+model Subscription {
+  id                String   @id @default(cuid())
+  name              String
+  shop              String   @unique
+  chargeId          String?
+  subscriptionId    String?
+  installed         Boolean  @default(true)
+  createdAt         DateTime @default(now())
+  trialDays         Int      @default(0)
+  firstName         String?
+  lastName          String?
+  email             String?
+  accountOwner      Boolean  @default(false)
+  locale            String?
+  collaborator      Boolean? @default(false)
+  emailVerified     Boolean? @default(false)
+  maxItems          Int      @default(1000)
+  maxOrders         Int      @default(500)
+  maxMessages       Int      @default(2000)
+  plan              String   @default("growth")
+  price             Float    @default(29.00)
+  syncMethod        String   @default("daily")
+  updatedAt         DateTime @updatedAt
+  messagesRemaining Int      @default(2000)
+  nextRefillDate    DateTime @default(now())
+}
+
+model Product {
+  id               String      @id @default(cuid())
+  shop             String
+  shopifyId        String
+  title            String
+  description      String?
+  body             String?
+  tags             String[]
+  handle           String?
+  url              String?
+  price            Float?
+  minPrice         Float?
+  maxPrice         Float?
+  content          String
+  createdAt        DateTime    @default(now())
+  updatedAt        DateTime    @updatedAt
+  compareAtPrice   Float?
+  productType      String?
+  sku              String?
+  vendor           String?
+  weight           Float?
+  publishedAt      DateTime?
+  images           Image[]
+  variants         Variant[]
+  collections      Collection[]
+  hasOnlyDefaultVariant Boolean @default(false)
+  seoTitle         String?
+  seoDescription   String?
+  totalInventory   Int @default(0)
+  tracksInventory  Boolean @default(false)
+
+  notionLastEditedAt DateTime?
+
+  @@unique([shop, shopifyId])
+  @@index([shop])
+  @@index([shopifyId])
+}
+
+model Collection {
+  id          String   @id @default(cuid())
+  shop        String
+  shopifyId   String
+  title       String
+  description String?
+  body        String?
+  handle      String?
+  url         String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  publishedAt DateTime?
+  products    Product[]
+
+  notionLastEditedAt DateTime?
+
+  @@unique([shop, shopifyId])
+  @@index([shop])
+  @@index([shopifyId])
+}
+
+model Customer {
+  id          String   @id @default(cuid())
+  shop        String
+  shopifyId   String
+  firstName   String?
+  lastName    String?
+  email       String?
+  phone       String?
+  ordersCount Int      @default(0)
+  totalSpent  Float    @default(0)
+  tags        String[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  notionLastEditedAt DateTime?
+
+  orders             Order[]
+
+  @@unique([shop, shopifyId])
+  @@index([shop])
+}
+
+model Order {
+  id                String   @id @default(cuid())
+  shop              String
+  shopifyId         String
+  name              String
+  totalPrice        Float    @default(0)
+  financialStatus   String?
+  fulfillmentStatus String?
+  customerName      String?
+  customerId        String?
+  customer          Customer? @relation(fields: [customerId], references: [id])
+  productIds        String[]
+  variantIds        String[]
+  discountCodes     String[]
+  discountValues    String[]
+  totalRefunded     Float    @default(0)
+  refundNotes       String[]
+  returnStatus      String?
+  cancelledAt       DateTime?
+  closed            Boolean  @default(false)
+  note              String?
+  tags              String[]
+  trackingCompanies String[]
+  trackingNumbers   String[]
+  trackingUrls      String[]
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  notionLastEditedAt DateTime?
+
+  @@unique([shop, shopifyId])
+  @@index([shop])
+}
+
+model Image {
+  id             String   @id @default(cuid())
+  productId      String
+  shopifyImageId String
+  url            String
+  altText        String?
+  position       Int
+  createdAt      DateTime @default(now())
+  product        Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@index([productId])
+  @@index([shopifyImageId])
+}
+
+model Variant {
+  id               String   @id @default(cuid())
+  productId        String
+  shopifyVariantId String
+  title            String
+  price            Float
+  compareAtPrice   Float?
+  sku              String?
+  barcode          String?
+  weight           Float?
+  weightUnit       String?
+  taxable          Boolean  @default(true)
+  inventory        Int?
+  options          Json?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+  product          Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  notionLastEditedAt DateTime?
+
+  @@index([productId])
+  @@index([shopifyVariantId])
+}
+
+model IndexStatus {
+  id               String    @id @default(cuid())
+  shop                     String    @unique
+  lastIndexedAt            DateTime?
+  lastProductsIndexedAt    DateTime?
+  lastCollectionsIndexedAt DateTime?
+  lastCustomersIndexedAt   DateTime?
+  lastOrdersIndexedAt      DateTime?
+  productsCount            Int       @default(0)
+  blogsCount               Int       @default(0)
+  collectionsCount         Int       @default(0)
+  status                   String    @default("idle")
+  errorMessage             String?
+  createdAt                DateTime  @default(now())
+  updatedAt                DateTime  @updatedAt
+  embeddingsCount          Int       @default(0)
+  totalBlogs               Int       @default(0)
+  totalCollections         Int       @default(0)
+  totalProducts            Int       @default(0)
+  customersCount           Int       @default(0)
+  ordersCount              Int       @default(0)
+  totalCustomers           Int       @default(0)
+  totalOrders              Int       @default(0)
+}
+
+model StoreConfig {
+  id                String   @id @default(uuid())
+  shop              String   @unique
+  storeName         String
+  notionAccessToken String?
+  notionWorkspaceId String?
+  notionParentPageId String?
+  notionProductsDbId String?
+  notionVariantsDbId String?
+  notionCollectionsDbId String?
+  notionCustomersDbId String?
+  notionOrdersDbId String?
+  syncToken         String?  @unique
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+}
+
+model Shop {
+  id           String   @id @default(uuid())
+  shop         String   @unique
+  storeName    String?
+  url          String?
+  shopifyEmail String?
+  notionEmail  String?
+  status       String   @default("active")
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model WebhookStatus {
+  id          String   @id @default(uuid())
+  shop        String
+  topic       String
+  status      String
+  output      String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  @@index([shop])
+  @@index([createdAt])
+}
+
+model ChatSession {
+  id        String        @id @default(uuid())
+  shop      String
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+  messages  ChatMessage[]
+}
+
+model ChatMessage {
+  id          String      @id @default(uuid())
+  sessionId   String
+  role        String
+  content     String
+  createdAt   DateTime    @default(now())
+  suggestions Json?       @default("{}")
+  session     ChatSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+}
+
+model TokenUsage {
+  id            String   @id @default(uuid())
+  shop          String
+  session       String?
+  tokensIn      Int
+  tokensOut     Int
+  totalTokens   Int
+  model         String?
+  endpoint      String?
+  status        String   @default("success")
+  errorMessage  String?
+  createdAt     DateTime @default(now())
+  errorResponse String?
+  cachedTokens  Int      @default(0)
+
+  @@index([shop])
+  @@index([createdAt])
+  @@index([shop, createdAt])
+}
+
+model NotionSyncStatus {
+  id                      String    @id @default(cuid())
+  shop                    String    @unique
+  lastSyncedAt            DateTime?
+  lastProductsSyncedAt    DateTime?
+  lastCollectionsSyncedAt DateTime?
+  lastCustomersSyncedAt   DateTime?
+  lastOrdersSyncedAt      DateTime?
+  productsCount           Int       @default(0)
+  collectionsCount        Int       @default(0)
+  status                  String    @default("idle")
+  errorMessage            String?
+  createdAt               DateTime  @default(now())
+  updatedAt               DateTime  @updatedAt
+  totalProducts           Int       @default(0)
+  totalCollections        Int       @default(0)
+  customersCount          Int       @default(0)
+  ordersCount             Int       @default(0)
+  totalCustomers          Int       @default(0)
+  totalOrders             Int       @default(0)
+  variantsCount           Int       @default(0)
+}
